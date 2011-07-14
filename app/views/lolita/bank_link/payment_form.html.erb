@@ -1,0 +1,7 @@
+<html>
+<body onload="document.bank_link_form.submit();">
+<form method="POST" name="bank_link_form" action="<%= Lolita::BankLink.url %>">
+  <%= raw @payment_request.render_form_data %>
+</form>
+</body>
+</html>
