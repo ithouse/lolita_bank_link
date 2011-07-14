@@ -1,6 +1,5 @@
 module Lolita::BankLink
-  class CommonController < ApplicationController
-    include ActiveMerchant::Billing
+  class CommonController < ActionController::Base
     before_filter :set_active_payment
     skip_before_filter :verify_authenticity_token
 

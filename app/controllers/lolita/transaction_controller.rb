@@ -16,8 +16,7 @@ module Lolita::BankLink
       #@test_parameters = {"encoding"=>"WINDOWS-1257", "VK_REC_ID"=>"SMSBUZZ", "VK_REF"=>"2", "VK_STAMP"=>"2", "VK_SERVICE"=>"1901", "action"=>"confirm", "VK_MSG"=>"Pirkums smsbuzz.lv", "VK_LANG"=>"LAT", "controller"=>"cms/swedbank_banklink", "VK_VERSION"=>"008", "VK_AUTO"=>"N", "VK_MAC"=>"HUSXJzvBZV3CKuULkeq1ht9VNx8im29wfKDW5ReoyKQPkL6iy9JDzlT5w9sHugWQk9pf2F76+EPqsKIDN0JMjJEZSu9lgpSnkCvlZQTRMvavKwfOg6YotY0EQ4RPTGu2e7e8U7eqz+VS9ng/g/tgYNl/AqMevQikHHnhzwAdnsg=", "VK_SND_ID"=>"HP"}
 
       rs = Lolita::BankLink::Response.new(params)
-      if rs.valid?
-        rs.update_transaction
+      if rs.valid? && rs.update_transaction
         redirect_to "#{session[:payment_data][:finish_path]}?merchant=bank_link&trx_id=#{rs.get_trx_id}"
       else
         render :text => I18n.t('bank_link.wrong_request'), :status => 400

@@ -1,22 +1,10 @@
 module Lolita::BankLink
   class Response
-    attr_reader :params, :required_params, :error
+    attr_reader :params, :required_params, :error, :crypt
 
     def initialize params
-      @params = params
-      @required_params = read_required_params(params)
+      @params = self.read_required_params(params)
       @crypt = Lolita::BankLink::Crypt.new
-    end
-
-    def valid?
-        if self.params['VK_SERVICE'].to_i == 1902
-          self.error = "Comunication error, sender or signature  not recognized"
-        elsif @required_params[:rec_id] != Lolita::BankLink.sender
-          self.error = "Wrong sender"
-        else
-          verify_mac_signature
-        end
-        self.error ? false : true
     end
 
     def required_params_by_service(service)
@@ -35,7 +23,34 @@ module Lolita::BankLink
       self.required_params[:ref]
     end
 
+    def update_transaction
+      get_trx.update_attribute(:status, completed? ? :completed : :rejected)
+    end
+
+    def completed?
+      self.params[:service].to_i == 1101
+    end
+
+    def failed?
+      !completed?
+    end
+
+    def valid?
+      if self.params[:service].to_i == 1902
+        self.error = "Comunication error, sender or signature  not recognized"
+      elsif self.params[:rec_id] != Lolita::BankLink.sender
+        self.error = "Wrong sender"
+      elsif !self.crypt.verify_mac_signature(self.params,read_signature)
+        self.error = "Wrong signature"
+      end
+      self.error ? false : true
+    end
+
     private
+
+    def get_trx
+      Lolita::BankLink::Transaction.find(self.get_trx_id)
+    end
 
     def read_signature
       self.params['VK_MAC']

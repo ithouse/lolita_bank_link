@@ -10,10 +10,8 @@ Gem::Specification.new do |s|
   s.homepage    = ""
   s.summary     = %q{TODO: Write a gem summary}
   s.description = %q{TODO: Write a gem description}
-  s.add_runtime_dependency("activesupport", '>=2.3.10')
-  s.add_runtime_dependency("activesupport", '>=2.3.10')
   s.rubyforge_project = "lolita_bank_link"
-
+  s.add_runtime_dependency('rails','>=2.3.10')
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
