@@ -1,8 +1,6 @@
 class CreateBankLinkTransactions < ActiveRecord::Migration
   def self.up
     create_table :bank_link_transactions do |t|
-      t.string :transaction_id, :length => 20
-      t.integer :transaction_code, :length => 4
       t.enum :status, :limit => [:processing, :completed, :rejected, :reversed], :default => :processing
       t.references :paymentable, :polymorphic => true
       t.string :ip, :length => 10

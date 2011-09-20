@@ -12,9 +12,5 @@ require "lolita/bank_link/version"
 require "lolita/bank_link/crypt"
 require "lolita/bank_link/billing"
 
-require File.join(File.dirname(__FILE__), '../', 'config','routes')
 require File.join(File.dirname(__FILE__), '../', 'app', 'helpers', 'bank_link_helper')
 ActionView::Base.send :include, BankLinkHelper
-require File.join(File.dirname(__FILE__), '../', 'app', 'models', 'lolita','bank_link','transaction')
-require File.join(File.dirname(__FILE__), '../', 'app', 'controllers', 'lolita','common_controller')
-require File.join(File.dirname(__FILE__), '../', 'app', 'controllers', 'lolita','transaction_controller')

@@ -1,18 +1,26 @@
 module Lolita::BankLink
   class Request
-    attr_reader :crypt
+    attr_reader :crypt, :payment, :transaction
     
-    def initialize
+    def initialize payment, transaction
+      @transaction = transaction
+      @payment = payment
       @crypt = Lolita::BankLink::Crypt.new
     end
 
-    def build_form_data(paymentable, data = {})
-      data[:stamp] = paymentable.id
-      data[:ref] = data[:ref] || paymentable.id
+    def build_form_data(data = {})
+      data[:stamp] = self.payment.id
+      data[:ref] = self.transaction.id
       data[:snd_id] = Lolita::BankLink.sender
-      data[:amount] = amount(paymentable.price)
-      data[:curr] = currency(paymentable.currency)
-      data[:msg] = paymentable.description
+      if need_convert_to_lvl?
+        # avoid triple convert
+        data[:amount] = amount(self.payment.deposit_price.exchange_to('LVL'))
+        data[:curr] = 'LVL'
+      else
+        data[:amount] = amount(self.payment.price)
+        data[:curr] = currency(self.payment.currency)
+      end
+      data[:msg] = self.payment.description
       prepare_for_banklink(data)
     end
 
@@ -22,7 +30,7 @@ module Lolita::BankLink
       data[:version] = '008'
       data[:mac] = self.crypt.calc_mac_signature(data)
       data[:lang] = data[:lang] || Lolita::BankLink.lang
-      data[:return] = data[:return] || answer_bank_link_path
+      data[:encoding] = data[:encoding] || "UTF-8"
       data
     end
 
@@ -145,5 +153,9 @@ module Lolita::BankLink
       '894' => 'AMK',
       '716' => 'ZWD'
     }
+
+    def need_convert_to_lvl?
+      true
+    end
   end
 end

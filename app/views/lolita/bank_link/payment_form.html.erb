@@ -1,7 +1,16 @@
 <html>
-<body onload="document.bank_link_form.submit();">
-<form method="POST" name="bank_link_form" action="<%= Lolita::BankLink.url %>">
-  <%= raw @payment_request.render_form_data %>
+<head>
+    <%= javascript_include_tag "jquery-1.4.1.min" %>
+</head>
+<body>
+<%#= image_tag "ajax-loader3.gif" %>
+<form method="POST" name="bank_link_form" action="<%= Lolita::BankLink.action_url %>">
+  <%= render_bank_link_form_data @payment_request %>
+  <input type="image" id="submit_button" src="/images/ajax-loader3.gif" name="submit" alt="Submit"  style="display:none;"/>
 </form>
+<br />
+<script type="text/javascript">
+$(function(){ $('#submit_button').trigger('click') });
+</script>
 </body>
 </html>

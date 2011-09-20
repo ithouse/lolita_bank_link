@@ -1,3 +1,5 @@
+require 'ipaddr'
+
 module Lolita::BankLink
   class Transaction < ActiveRecord::Base
     set_table_name :bank_link_transactions
@@ -24,9 +26,9 @@ module Lolita::BankLink
     
     private
     
-    # trigger "fd_trx_saved" on our paymentable model
+    # trigger "payment_trx_saved" on our paymentable model
     def touch_paymentable
-      paymentable.bank_link_trx_saved(self) if paymentable
+      paymentable.payment_trx_saved(self) if paymentable
     end
   end
 end

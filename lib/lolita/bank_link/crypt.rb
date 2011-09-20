@@ -1,5 +1,6 @@
 module Lolita::BankLink
   class Crypt
+    $KCODE="u"
     
     def initialize
       @private_key = read_private_key(Lolita::BankLink.private_key)
@@ -8,37 +9,36 @@ module Lolita::BankLink
     end
 
     def sign message
-      Base64::encode64(@my_private.sign(@digest, message)).rstrip
+      Base64::encode64(@private_key.sign(@digest, message)).rstrip
     end
 
-    def verify message, signature_base64
-      decoded_signature = Base64::decode64(signature_base64)
-      return @bank_public.verify(@digest, decoded_signature, message)
+    def verify_mac_signature(params, signature)
+      mac = prepair_mac_string(params,params[:service])
+      return verify(mac, signature)
     end
 
-    def prepair_mac_string(post, service)
-      required_fields = required_params_by_service(service)
-      mac = ""
-      required_fields.each{|field|
-        raise ArgumentError, "BankLinkGateway a required field #{field.to_s} for signing is not available or service: #{service}" if !post[field]
-        post[field] = post[field].to_s.strip
-        mac += post[field].to_s.size.to_s.rjust(3,'0') + post[field].to_s
-      }
-      mac
-    end
-
-    def calc_mac_signature(post,service = '1002')
-      mac = prepair_mac_string(post,service)
-      enc_mac = Lolita::BankLink::Crypt.new.sign(mac)
+    def calc_mac_signature(params,service = '1002')
+      mac = prepair_mac_string(params,service)
+      enc_mac = self.sign(mac)
       return enc_mac
     end
 
-    def verify_mac_signature(post, signature)
-      mac = prepair_mac_string(post,post[:service])
-      return Lolita::BankLink::Crypt.new.verify(mac, signature)
+    private
+
+    def verify message, signature_base64
+      decoded_signature = Base64::decode64(signature_base64)
+      return @public_key.verify(@digest, decoded_signature, message)
     end
 
-    private
+    def prepair_mac_string(post, service)
+      required_fields = Lolita::BankLink.required_params_by_service(service)
+      mac = ""
+      required_fields.each{|field|
+        post[field] = post[field].to_s.strip
+        mac += post[field].to_s.chars.count.to_s.rjust(3,'0') + post[field].to_s
+      }
+      mac
+    end
 
     def read_private_key key_path
       OpenSSL::PKey::RSA.new File.read(key_path)

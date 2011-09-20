@@ -1,30 +1,22 @@
 module Lolita::BankLink
   class Response
-    attr_reader :params, :required_params, :error, :crypt
+    attr_reader :params, :required_params, :crypt, :signature
+    attr_accessor :error
 
     def initialize params
-      @params = self.read_required_params(params)
+      @params = read_required_params(params)
+      @signature = read_signature(params)
       @crypt = Lolita::BankLink::Crypt.new
     end
 
-    def required_params_by_service(service)
-      required_fields = nil
-      if service=='1002'
-        required_fields = [:service,:version,:snd_id,:stamp,:amount,:curr,:ref,:msg]
-      elsif service=='1101'
-        required_fields = [:service,:version,:snd_id,:rec_id,:stamp,:t_no,:amount,:curr,:rec_acc,:rec_name,:snd_acc,:snd_name,:ref,:msg,:t_date]
-      elsif service=='1901'
-        required_fields = [:service,:version,:snd_id,:rec_id,:stamp,:ref,:msg]
-      end
-      required_fields
-    end
-
     def get_trx_id
-      self.required_params[:ref]
+      self.params.has_key?(:ref) ? self.params[:ref] : nil
     end
 
     def update_transaction
-      get_trx.update_attribute(:status, completed? ? :completed : :rejected)
+      trx = get_trx
+      trx.update_attribute(:status, completed? ? 'completed' : 'rejected') if trx
+      trx
     end
 
     def completed?
@@ -36,11 +28,9 @@ module Lolita::BankLink
     end
 
     def valid?
-      if self.params[:service].to_i == 1902
-        self.error = "Comunication error, sender or signature  not recognized"
-      elsif self.params[:rec_id] != Lolita::BankLink.sender
+      if self.params[:rec_id] != Lolita::BankLink.sender
         self.error = "Wrong sender"
-      elsif !self.crypt.verify_mac_signature(self.params,read_signature)
+      elsif !self.crypt.verify_mac_signature(self.params,self.signature)
         self.error = "Wrong signature"
       end
       self.error ? false : true
@@ -49,11 +39,11 @@ module Lolita::BankLink
     private
 
     def get_trx
-      Lolita::BankLink::Transaction.find(self.get_trx_id)
+      self.get_trx_id ? Lolita::BankLink::Transaction.find_by_id(self.get_trx_id) : nil
     end
 
-    def read_signature
-      self.params['VK_MAC']
+    def read_signature(params)
+      params['VK_MAC'].blank? ? "" : params['VK_MAC']
     end
 
     def read_required_params(param_hash)
@@ -61,7 +51,7 @@ module Lolita::BankLink
       if param_hash['VK_SERVICE'].nil?
         self.error = "BankLinkGateway reading post service not set"
       else
-        req_list = required_params_by_service(param_hash['VK_SERVICE'])
+        req_list = Lolita::BankLink.required_params_by_service(param_hash['VK_SERVICE'])
         if req_list.nil?
           self.error = "BankLinkGateway unknown service posted #{param_hash['VK_SERVICE']}"
         else
