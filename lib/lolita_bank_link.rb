@@ -5,7 +5,7 @@ require 'active_record'
 require 'action_pack'
 require 'action_controller'
 require 'digest'
-require 'md5'
+require 'digest/md5'
 require 'openssl'
 require "lolita/bank_link/bank_link"
 require "lolita/bank_link/version"

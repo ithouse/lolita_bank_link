@@ -1,6 +1,10 @@
 module Lolita
   module BankLink
     mattr_accessor :bank_certificate, :private_key, :sender, :url, :lang
+  
+    BANK_LINK_PRIVATE_KEY = "../../../spec/fixtures/private_key.pem"
+    BANK_LINK_BANK_CERTIFICATE = "../../../spec/fixtures/certificate.pem"
+    BANK_LINK_SENDER = "TEST"
 
     # defaults
     self.private_key = BANK_LINK_PRIVATE_KEY
