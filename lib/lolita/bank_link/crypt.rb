@@ -1,6 +1,6 @@
 module Lolita::BankLink
   class Crypt
-    $KCODE="u"
+    $KCODE="u" unless RUBY_VERSION =~ /^1\.9/
     
     def initialize
       @private_key = read_private_key(Lolita::BankLink.private_key)
