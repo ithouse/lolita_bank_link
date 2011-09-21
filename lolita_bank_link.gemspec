@@ -1,10 +1,8 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require 'lolita_bank_link'
 
 Gem::Specification.new do |s|
   s.name        = "lolita_bank_link"
-  s.version     = Lolita::BankLink::VERSION
+  s.version     = "0.0.2"
   s.authors     = ["Gatis Tomsons"]
   s.email       = ["gatis@ithouse.cc"]
   s.homepage    = ""
