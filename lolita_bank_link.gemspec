@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Gatis Tomsons"]
   s.email       = ["gatis@ithouse.cc"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{bank_link payment}
+  s.description = %q{bank_link payment plugin for Lolita}
   s.rubyforge_project = "lolita_bank_link"
   s.add_runtime_dependency('rails','>=2.3.10')
   s.add_development_dependency('faker')
