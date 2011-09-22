@@ -1,10 +1,13 @@
+# -*- encoding: utf-8 -*-
 module Lolita::BankLink
   class TestController < Lolita::BankLink::CommonController
     before_filter :render_nothing
     
     # you get there if you are in development environment and access "checkout" action, it's for testing server responses
     def fake_server
-      @@return_host = request.env["HTTP_REFERER"].split('/')[2] if request.env["HTTP_REFERER"]
+      return_host = request.env["HTTP_REFERER"].split('/')[2] if request.env["HTTP_REFERER"]
+      session[:return_host] = return_host
+      Rails.logger.info "return_host='#{return_host}'"
       if params["VK_SERVICE"]
         server_handler
       else
@@ -15,20 +18,22 @@ module Lolita::BankLink
     # when "success" button pressed
     def fake_success
       @@fake_result = true
-      data = complete_bank_link_repsponse(session[:fake_server][:params], '1101')
-      redirect_to answer_bank_link_url(data.merge(:host => @@return_host))
+      data = complete_bank_link_repsponse(session[:fake_server][:params], '1101', true)
+      #redirect_to answer_bank_link_url(data.merge(:host => session[:return_host]))
+      redirect_to "http://#{session[:return_host]}/bank_link/answer#{data}"
     end
 
     # when "failure" button pressed
     def fake_failure
       @@fake_result = false
-      data = complete_bank_link_repsponse(session[:fake_server][:params], '1901')
-      redirect_to answer_bank_link_url(data.merge(:host => @@return_host))
+      data = complete_bank_link_repsponse(session[:fake_server][:params], '1901', true)
+      #redirect_to answer_bank_link_url(data.merge(:host => session[:return_host]))
+      redirect_to "http://#{session[:return_host]}/bank_link/answer#{data}"
     end
 
     # renders nothing if not in development environment
     def render_nothing
-      render :nothing => true if RAILS_ENV == 'production'
+      render :nothing => true if (defined?(RAILS_ENV) && RAILS_ENV == 'production') || Rails.env.production?
     end
 
     private
@@ -52,7 +57,7 @@ module Lolita::BankLink
       }
       req_params
     end
-    def complete_bank_link_repsponse(param_hash, service = '1101')
+    def complete_bank_link_repsponse(param_hash, service = '1101', as_string = false)
       if service == '1101'
         param_hash[:service] = '1101'
         param_hash[:rec_id] = param_hash[:snd_id]
@@ -78,8 +83,17 @@ module Lolita::BankLink
       }
       rs = Lolita::BankLink::Response.new(data)
       data["VK_MAC"] = rs.crypt.calc_mac_signature(rs.params, param_hash[:service])
-      #RAILS_DEFAULT_LOGGER.info "complete_bank_link_repsponse=#{data}"
-      data
+      #Rails.logger.info "complete_bank_link_repsponse=#{data}"
+      Rails.logger.info "VK_MAC=#{data["VK_MAC"]}"
+      unless as_string
+        data
+      else
+        res = '?'
+        data.each do |key,val|
+          res += "#{key}=#{val}&"
+        end
+        URI.encode(res, /[^-_.!~*'()a-zA-Z\d;\/?:@&=$,\[\]]/)
+      end
     end
 
   end

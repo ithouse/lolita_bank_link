@@ -14,7 +14,7 @@ module Lolita::BankLink
       data[:snd_id] = Lolita::BankLink.sender
       if need_convert_to_lvl?
         # avoid triple convert
-        data[:amount] = amount(self.payment.deposit_price.exchange_to('LVL'))
+        data[:amount] = amount(self.payment.price.exchange_to('LVL'))
         data[:curr] = 'LVL'
       else
         data[:amount] = amount(self.payment.price)
@@ -155,7 +155,7 @@ module Lolita::BankLink
     }
 
     def need_convert_to_lvl?
-      true
+      false
     end
   end
 end

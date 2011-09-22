@@ -1,18 +1,23 @@
 # encoding: utf-8
 require 'rubygems'
-gem 'rails', '~>2.3'
+#gem 'rails', '~>2.3'
 require 'active_record'
-require 'spec'
+require 'rspec'
+#require 'spec'
 #require 'faker'
-
-BANK_LINK_PRIVATE_KEY = File.dirname(__FILE__)+"/fixtures/private_key.pem"
-BANK_LINK_BANK_CERTIFICATE  = File.dirname(__FILE__)+"/fixtures/certificate.pem"
-BANK_LINK_SENDER = "TEST"
-
+require 'base64'
 # init bank_link
 require File.dirname(__FILE__)+'/../init.rb'
 
-ActiveRecord::Base.logger = Logger.new(File.open("#{File.dirname(__FILE__)}/database.log", 'w+'))
+#BANK_LINK_PRIVATE_KEY = File.dirname(__FILE__)+"/fixtures/private_key.pem"
+#BANK_LINK_BANK_CERTIFICATE  = File.dirname(__FILE__)+"/fixtures/certificate.pem"
+#BANK_LINK_SENDER = "TEST"
+Lolita::BankLink.private_key = File.dirname(__FILE__)+"/fixtures/private_key.pem"
+Lolita::BankLink.bank_certificate = File.dirname(__FILE__)+"/fixtures/certificate.pem"
+Lolita::BankLink.sender = "TEST"
+
+
+#ActiveRecord::Base.logger = Logger.new(File.open("#{File.dirname(__FILE__)}/database.log", 'w+'))
 ActiveRecord::Base.establish_connection({ :database => ":memory:", :adapter => 'sqlite3', :timeout => 500 })
 
 # setup I18n
@@ -81,7 +86,14 @@ class Reservation < ActiveRecord::Base
   #-----------------------
 end
 
-Spec::Runner.configure do |config|
+#Spec::Runner.configure do |config|
+#  config.before(:each) do
+#    ActiveRecord::Base.connection.execute "DELETE from bank_link_transactions"
+#    ActiveRecord::Base.connection.execute "DELETE from reservations"
+#  end
+#end
+RSpec.configure do |config|
+  config.mock_with :rspec
   config.before(:each) do
     ActiveRecord::Base.connection.execute "DELETE from bank_link_transactions"
     ActiveRecord::Base.connection.execute "DELETE from reservations"

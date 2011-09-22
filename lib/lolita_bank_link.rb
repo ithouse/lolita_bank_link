@@ -11,6 +11,9 @@ require "lolita/bank_link/bank_link"
 require "lolita/bank_link/version"
 require "lolita/bank_link/crypt"
 require "lolita/bank_link/billing"
+require 'lolita/bank_link/request'
+require 'lolita/bank_link/response'
+
 require "lolita/bank_link/rails"
 
 require File.join(File.dirname(__FILE__), '../', 'app', 'helpers', 'bank_link_helper')

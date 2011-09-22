@@ -1,11 +1,11 @@
 <html>
 <head>
-    <%= javascript_include_tag "jquery-1.4.1.min" %>
+    <%= javascript_include_tag "jquery" %>
 </head>
 <body>
 <%#= image_tag "ajax-loader3.gif" %>
 <form method="POST" name="bank_link_form" action="<%= Lolita::BankLink.action_url %>">
-  <%= render_bank_link_form_data @payment_request %>
+  <%= raw render_bank_link_form_data @payment_request %>
   <input type="image" id="submit_button" src="/images/ajax-loader3.gif" name="submit" alt="Submit"  style="display:none;"/>
 </form>
 <br />

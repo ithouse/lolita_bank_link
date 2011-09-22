@@ -14,6 +14,7 @@ module Lolita::BankLink
     # then we get transactions result and redirect to your given "finish" path
     def answer      
       rs = Lolita::BankLink::Response.new(params)
+      Rails.logger.info "VK_MAC=#{params["VK_MAC"]}"
       if rs.valid? && rs.update_transaction
         if session[:payment_data]
           redirect_to "#{session[:payment_data][:finish_path]}?merchant=bank_link"

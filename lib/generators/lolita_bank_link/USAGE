@@ -1,0 +1,4 @@
+Run
+=============
+
+ruby script/rails g lolita_bank_link:install
