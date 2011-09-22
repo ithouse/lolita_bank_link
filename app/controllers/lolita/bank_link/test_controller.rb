@@ -7,7 +7,6 @@ module Lolita::BankLink
     def fake_server
       return_host = request.env["HTTP_REFERER"].split('/')[2] if request.env["HTTP_REFERER"]
       session[:return_host] = return_host
-      Rails.logger.info "return_host='#{return_host}'"
       if params["VK_SERVICE"]
         server_handler
       else
@@ -84,7 +83,6 @@ module Lolita::BankLink
       rs = Lolita::BankLink::Response.new(data)
       data["VK_MAC"] = rs.crypt.calc_mac_signature(rs.params, param_hash[:service])
       #Rails.logger.info "complete_bank_link_repsponse=#{data}"
-      Rails.logger.info "VK_MAC=#{data["VK_MAC"]}"
       unless as_string
         data
       else
