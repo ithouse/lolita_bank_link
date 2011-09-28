@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
     "app/models/lolita/bank_link/transaction.rb",
     "app/views/lolita/bank_link/payment_form.html.erb",
     "app/views/lolita/bank_link/test/fake_server.html.erb",
-    "config/locales/en-US.yml",
     "config/locales/en.yml",
     "config/locales/lv.yml",
     "config/routes.rb",
