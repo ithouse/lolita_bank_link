@@ -16,6 +16,7 @@ module Lolita::BankLink
     def update_transaction
       trx = get_trx
       trx.update_attribute(:status, completed? ? 'completed' : 'rejected') if trx
+      trx.update_attributes(@params)
       trx
     end
 
@@ -36,11 +37,11 @@ module Lolita::BankLink
       self.error ? false : true
     end
 
-    private
-
     def get_trx
       self.get_trx_id ? Lolita::BankLink::Transaction.find_by_id(self.get_trx_id) : nil
     end
+
+    private
 
     def read_signature(params)
       params['VK_MAC'].blank? ? "" : params['VK_MAC']

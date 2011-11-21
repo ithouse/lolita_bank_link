@@ -4,7 +4,21 @@ class CreateBankLinkTransactions < ActiveRecord::Migration
       t.enum :status, :limit => [:processing, :completed, :rejected, :reversed], :default => :processing
       t.references :paymentable, :polymorphic => true
       t.string :ip, :length => 10
-
+      t.string :service
+      t.string :version
+      t.string :snd_id
+      t.string :rec_id
+      t.string :stamp
+      t.string :t_no
+      t.string :amount
+      t.string :curr
+      t.string :rec_acc
+      t.string :rec_name
+      t.string :snd_acc
+      t.string :snd_name
+      t.string :ref
+      t.string :msg
+      t.string :t_date
       t.timestamps
     end
 
