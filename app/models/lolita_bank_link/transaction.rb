@@ -17,14 +17,16 @@ module LolitaBankLink
       self[:ip] = IPAddr.new(x).to_i
     end
 
-    # add new transaction in Checkout
-    def self.add payment, request
-      LolitaBankLink::Transaction.create!(
-        status: "processing",
-        paymentable_id: payment.id,
-        paymentable_type: payment.class.to_s,
-        ip: request.remote_ip
-      )
+    class << self
+      # add new transaction in Checkout
+      def add payment, request
+        LolitaBankLink::Transaction.create!(
+          status: "processing",
+          paymentable_id: payment.id,
+          paymentable_type: payment.class.to_s,
+          ip: request.remote_ip
+        )
+      end
     end
 
     private

@@ -6,25 +6,25 @@ module LolitaBankLink
 
         # Payment description
         def description
-          raise 'Redefine this method in your billing model.'
+          raise NotImplementedError, 'Redefine this method in your billing model.'
         end
 
         # Price of payment in cents
         def price
-          raise 'Redefine this method in your billing model.'
+          raise  NotImplementedError, 'Redefine this method in your billing model.'
         end
 
         # Currency as 3 letter code as in ISO 4217
         def currency
-          raise 'Redefine this method in your billing model.'
+          raise  NotImplementedError, 'Redefine this method in your billing model.'
         end
 
         def bank_link_trx_saved trx
-          raise "Redefine this method in your billing model."
+          raise  NotImplementedError, "Redefine this method in your billing model."
         end
 
         def bank_link_return_path
-          raise 'This should be inplemented on your paymentable class'
+          raise  NotImplementedError, 'This should be inplemented on your paymentable class'
         end
 
         # Add this to your paid? method along with other payment methods

@@ -4,13 +4,9 @@ module LolitaBankLink
     before_filter :set_active_payment, :check_valid_payment, only: :checkout
 
     def checkout
-      if @payment
-        transaction = LolitaBankLink::Transaction.add(@payment, request)
-        @payment_request = LolitaBankLink::Request.new(@payment, transaction)
-        render "lolita_bank_link/payment_form"
-      else
-        render nothing: true, status: 400
-      end
+      transaction = LolitaBankLink::Transaction.add(@payment, request)
+      @payment_request = LolitaBankLink::Request.new(@payment, transaction)
+      render "lolita_bank_link/payment_form"
     ensure
       if @payment && @payment_request
         LolitaBankLink.logger.info("[#{session_id}][#{@payment.id}][checkout] #{@payment_request.build_form_data}")
@@ -38,11 +34,11 @@ module LolitaBankLink
       end
     end
 
+    private
+
     def bank_auto_response?
       params["VK_AUTO"] == "Y"
     end
-
-    private
 
     # returns current payment instance from session
     def set_active_payment
@@ -60,7 +56,7 @@ module LolitaBankLink
 
     # forces SSL in production mode if availab:le
     def is_ssl_required
-      ssl_required(:answer, :checkout) if defined?(ssl_required) && (Rails.env.production? || Rails.env.staging?)
+      ssl_required(:answer, :checkout) if defined?(ssl_required) && LolitaBankLink.ssl_required
     end
 
     def response_params

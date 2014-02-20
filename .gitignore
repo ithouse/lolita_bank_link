@@ -2,5 +2,6 @@
 *swp
 coverage/
 spec/dummy/log/*.log
+spec/dummy/tmp/*
 .local.vimrc
 tags
