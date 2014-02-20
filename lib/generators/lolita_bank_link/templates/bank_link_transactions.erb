@@ -1,0 +1,32 @@
+class CreateBankLinkTransactions < ActiveRecord::Migration
+  def self.up
+    create_table :bank_link_transactions do |t|
+      t.string :status, default: "processing"
+      t.references :paymentable, polymorphic: true
+      t.string :ip, length: 10
+      t.string :service
+      t.string :version
+      t.string :snd_id
+      t.string :rec_id
+      t.string :stamp
+      t.string :t_no
+      t.string :amount
+      t.string :curr
+      t.string :rec_acc
+      t.string :rec_name
+      t.string :snd_acc
+      t.string :snd_name
+      t.string :ref
+      t.string :msg
+      t.string :t_date
+
+      t.timestamps
+    end
+
+    add_index :bank_link_transactions, [:paymentable_type, :paymentable_id]
+  end
+
+  def self.down
+    drop_table :bank_link_transactions
+  end
+end

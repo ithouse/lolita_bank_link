@@ -1,18 +1,14 @@
-# encoding: utf-8
-require File.dirname(__FILE__) + '/../spec_helper'
+require "spec_helper"
 
-describe Lolita::BankLink::Crypt do
-  before(:each) do
-    @params = {:ref=>"", :curr=>"", :service=>"1002", :msg=>"", :amount=>"", :snd_id=>"", :version=>"", :stamp=>"", :a=>:b}
-    @signature = "HW/lMtWwpKziwaw67Dz5LEa6E6FauWNdW7Chg67gcfdsK6PsSERiOA8QQxGA\ncnFEDnbUKGJhBI5DR0tezqkrvkPKBOoqtAs73aONHIVKDxPaGdE2BP0gJRoT\ndjzop91f2fuedK7Zmn1MIsVbxltRCXtl8GU/JXGxNEkQnTXHm70="
-  end
+describe LolitaBankLink::Crypt do
+  let(:params){ {ref: "12", curr: "EUR", service:"1002", msg: "X12", amount: "20.000", snd_id: "TEST", version: "008", stamp: "123"} }
+  subject{ LolitaBankLink::Crypt.new }
+
   it "should sign message" do
-    c = Lolita::BankLink::Crypt.new
-    c.sign(@params.to_s).should == @signature
+    expect(subject.sign(params.to_s)).to eq("ER6RRFtrkh+mBJXj/q1kFtboicROnfvqPjR8TcvIHYOHntJdGtTyRFQXUKH9\no21I4zPTkMCWPILSiztUzySG6Kn9PnXb5AUyc4SpT3Pb1CqXDIXgbce2Sw8q\ndZvC7YrjU2KwrGotCzNX5v9xmg/KqA9DSyA9BLFpOfqmUE9gfUs=")
   end
 
   it "should verify mac signature" do
-    c = Lolita::BankLink::Crypt.new
-    c.verify_mac_signature(@params,@signature).should be_true
+    expect(subject.verify_mac_signature(params, "MXGxIDxFKw8PuGXNLo2iYkErP2ee+hM3Umd9kxOZY05pVN5O818ON0yoYwtr\n3njndVkfIFguSrErF3zv0NJ3psCOZWyNFZ31FoiGhWsiKhb1WVTXq9g3dHj6\nsimk+D8XPLb9pEEOrQ7/b+S40nEjtTjlAzZ5kmukiVPy73sN0jY=")).to be_true
   end
 end

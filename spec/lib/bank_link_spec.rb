@@ -1,13 +1,12 @@
-# encoding: utf-8
-require File.dirname(__FILE__) + '/../spec_helper'
+require "spec_helper"
 
-describe Lolita::BankLink do
+describe LolitaBankLink do
   it "should have default attributes" do
-    Lolita::BankLink.private_key.should_not be_nil
-    Lolita::BankLink.bank_certificate.should_not be_nil
-    Lolita::BankLink.sender.should == "TEST"
-    Lolita::BankLink.url.should == "https://ib.swedbank.lv/banklink"
-    Lolita::BankLink.lang.should == "LAT"
+    LolitaBankLink.private_key.should_not be_nil
+    LolitaBankLink.bank_certificate.should_not be_nil
+    LolitaBankLink.sender.should == "TEST"
+    LolitaBankLink.url.should == "https://ib.swedbank.lv/banklink"
+    LolitaBankLink.lang.should == "LAT"
   end
 
   it "should check required params for services" do
@@ -17,7 +16,7 @@ describe Lolita::BankLink do
       '1901' => [:service,:version,:snd_id,:rec_id,:stamp,:ref,:msg]
     }
     services.keys.each do |name|
-      Lolita::BankLink.required_params_by_service(name).should == services[name]
+      LolitaBankLink.required_params_by_service(name).should == services[name]
     end
   end
 end

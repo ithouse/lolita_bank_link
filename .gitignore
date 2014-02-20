@@ -1,3 +1,6 @@
 *~
 *swp
-
+coverage/
+spec/dummy/log/*.log
+.local.vimrc
+tags
