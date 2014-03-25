@@ -10,11 +10,7 @@ require "lolita-bank-link/crypt"
 require "lolita-bank-link/billing"
 
 module LolitaBankLink
-  mattr_accessor :custom_logger, :ssl_required
-
-  def self.ssl_required
-    @@ssl_required.nil? && true
-  end
+  mattr_accessor :custom_logger
 
   def self.logger
     unless @logger
