@@ -54,7 +54,7 @@ module LolitaBankLink
       end
     end
 
-    # forces SSL in production mode if availab:le
+    # forces SSL in production mode if available
     def is_ssl_required
       ssl_required(:answer, :checkout) if defined?(ssl_required)
     end

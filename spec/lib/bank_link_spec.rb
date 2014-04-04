@@ -7,7 +7,6 @@ describe LolitaBankLink do
     expect(LolitaBankLink.sender).to eq('TEST')
     expect(LolitaBankLink.url).to eq('https://ib.swedbank.lv/banklink')
     expect(LolitaBankLink.lang).to eq('LAT')
-    expect(LolitaBankLink.ssl_required).to eq(true)
   end
 
   it 'should check required params for services' do

@@ -5,7 +5,7 @@
 </head>
 <body>
   <form method="POST" name="bank_link_form" action="<%= LolitaBankLink.url %>">
-    <%= render_bank_link_form_data @payment_request %>
+    <%= raw render_bank_link_form_data(@payment_request) %>
     <button type="submit" id="submit_button" name="submit" style="display:none;"></button>
   </form>
   <script type="text/javascript">
