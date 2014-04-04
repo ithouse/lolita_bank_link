@@ -10,9 +10,9 @@ module LolitaBankLink
     end
 
     def update_transaction
-      if transaction.status == "processing"
+      if valid?
         new_status = completed? ? "completed" : "failed"
-        transaction.update_attributes(params.merge(status: new_status))
+        transaction.update_attributes!(params.merge(status: new_status))
       end
     end
 
@@ -25,6 +25,8 @@ module LolitaBankLink
         self.error = "Wrong sender" and return false
       elsif !self.crypt.verify_mac_signature(self.params,self.signature)
         self.error = "Wrong signature" and return false
+      elsif transaction.status.to_sym != :processing
+        self.error = "Transaction has wrong status: #{transaction.status}"
       end
       self.error.blank?
     end

@@ -7,7 +7,7 @@ require "lolita-bank-link/version"
 Gem::Specification.new do |s|
   s.name        = "lolita-bank-link"
   s.version     = LolitaBankLink::VERSION
-  s.authors     = ["ITHouse"]
+  s.authors     = ["Gatis Tomsons", "ITHouse"]
   s.email       = ["info@ithouse.lv"]
   s.homepage    = "http://github.com/ithouse/lolita-bank-link"
   s.summary     = "BankLink payment plugin for Lolita"

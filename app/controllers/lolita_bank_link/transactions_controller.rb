@@ -16,18 +16,18 @@ module LolitaBankLink
     # This action is called twice
     #   - after client returns from BankLink server
     #   - bank sends another confirmation and add's VK_AUTO=Y to params
-    # 
     def answer
       response = LolitaBankLink::Response.new(response_params)
-      if response.valid? && response.update_transaction
+      if response.update_transaction
         if bank_auto_response?
           render nothing: true
         else
           redirect_to response.return_path
         end
       else
+        LolitaBankLink.logger.error("[#{session_id}][#{response.paymentable_id}][answer] #{response.error}")
         render text: I18n.t("bank_link.wrong_request"), status: 400
-      end  
+      end
     ensure
       if response
         LolitaBankLink.logger.info("[#{session_id}][#{response.paymentable_id}][answer] #{response.params}")

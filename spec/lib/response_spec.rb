@@ -6,6 +6,7 @@ describe LolitaBankLink::Response do
 
   it "should validate params" do
     params["VK_MAC"] = response.crypt.calc_mac_signature(response.params, '1101')
+    LolitaBankLink::Response.any_instance.stub(transaction: double(status: 'processing'))
     expect(LolitaBankLink::Response.new(params)).to be_valid
   end
 
@@ -18,16 +19,18 @@ describe LolitaBankLink::Response do
     context "with status processing" do
       context "when success response" do
         it "should update transaction with status completed" do
-          transaction.should_receive(:update_attributes).with(service:"1101", version:"008", snd_id:"HP", rec_id:"TEST", stamp:"68", t_no:"109", amount:"20.00", curr:"LVL", rec_acc:"LV12HABA0000000000000", rec_name:"Some INC", snd_acc:"LV12HABA0000000000000", snd_name:"MAX PAYNE", ref:"1", msg:"SomeSite - R07007973", t_date:"01.01.2000", status:"completed")
-          response.update_transaction
+          params["VK_MAC"] = response.crypt.calc_mac_signature(response.params, '1101')
+          transaction.should_receive(:update_attributes!).with(service:"1101", version:"008", snd_id:"HP", rec_id:"TEST", stamp:"68", t_no:"109", amount:"20.00", curr:"LVL", rec_acc:"LV12HABA0000000000000", rec_name:"Some INC", snd_acc:"LV12HABA0000000000000", snd_name:"MAX PAYNE", ref:"1", msg:"SomeSite - R07007973", t_date:"01.01.2000", status:"completed")
+          LolitaBankLink::Response.new(params).update_transaction
         end
       end
 
       context "when failed response" do
         let(:params){ super().merge({'VK_SERVICE' => '1901'})}
         it "should update transaction with status failed" do
-          transaction.should_receive(:update_attributes).with(service:"1901", version:"008", snd_id:"HP", rec_id:"TEST", stamp:"68", ref:"1", msg:"SomeSite - R07007973", status:"failed")
-          response.update_transaction
+          params["VK_MAC"] = response.crypt.calc_mac_signature(response.params, '1901')
+          transaction.should_receive(:update_attributes!).with(service:"1901", version:"008", snd_id:"HP", rec_id:"TEST", stamp:"68", ref:"1", msg:"SomeSite - R07007973", status:"failed")
+          LolitaBankLink::Response.new(params).update_transaction
         end
       end
     end
@@ -36,7 +39,7 @@ describe LolitaBankLink::Response do
       let(:transaction){ double(status: "completed") }
 
       it "should not update transaction" do
-        transaction.should_not_receive(:update_attributes)
+        transaction.should_not_receive(:update_attributes!)
         response.update_transaction
       end
     end
