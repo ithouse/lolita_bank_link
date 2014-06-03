@@ -10,7 +10,7 @@ module LolitaBankLink
     validates_associated :paymentable
 
     def ip
-      IPAddr.new(self[:ip], Socket::AF_INET).to_s
+      IPAddr.new(self[:ip].to_i, Socket::AF_INET).to_s
     end
 
     def ip=(x)
