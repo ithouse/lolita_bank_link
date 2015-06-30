@@ -1,9 +1,10 @@
 module LolitaBankLink
   class Response
-    attr_reader :params, :required_params, :crypt, :signature
+    attr_reader :params, :required_params, :crypt, :signature, :bank_auto_response
     attr_accessor :error
 
     def initialize params
+      @bank_auto_response = params["VK_AUTO"] == "Y"
       @params = read_required_params(params)
       @signature = read_signature(params)
       @crypt = LolitaBankLink::Crypt.new
@@ -45,6 +46,14 @@ module LolitaBankLink
 
     def transaction_completed?
       transaction && transaction.completed?
+    end
+
+    def success_redirect?
+      !bank_auto_response && transaction_completed?
+    end
+
+    def success_response?
+      bank_auto_response && transaction_completed?
     end
 
     private

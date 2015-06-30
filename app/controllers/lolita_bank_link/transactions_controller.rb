@@ -18,19 +18,13 @@ module LolitaBankLink
     #   - bank sends another confirmation and add's VK_AUTO=Y to params
     def answer
       response = LolitaBankLink::Response.new(response_params)
-      if response.update_transaction
-        if bank_auto_response?
-          render nothing: true
-        else
-          redirect_to response.return_path
-        end
+      response.update_transaction
+      if response.success_redirect?
+        redirect_to response.return_path
+      elsif response.success_response?
+        render nothing: true
       else
-        if !bank_auto_response? && response.transaction_completed?
-          redirect_to response.return_path
-        else
-          LolitaBankLink.logger.error("[#{session_id}][#{response.paymentable_id}][answer] #{response.error}")
-          render text: I18n.t("bank_link.wrong_request"), status: 400
-        end
+        render text: I18n.t("bank_link.wrong_request"), status: 400
       end
     ensure
       if response
@@ -39,10 +33,6 @@ module LolitaBankLink
     end
 
     private
-
-    def bank_auto_response?
-      params["VK_AUTO"] == "Y"
-    end
 
     # returns current payment instance from session
     def set_active_payment
