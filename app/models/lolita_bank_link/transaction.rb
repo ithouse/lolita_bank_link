@@ -17,6 +17,10 @@ module LolitaBankLink
       self[:ip] = IPAddr.new(x).to_i
     end
 
+    def completed?
+      status == 'completed'
+    end
+
     class << self
       # add new transaction in Checkout
       def add payment, request

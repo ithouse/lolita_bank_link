@@ -25,8 +25,12 @@ module LolitaBankLink
           redirect_to response.return_path
         end
       else
-        LolitaBankLink.logger.error("[#{session_id}][#{response.paymentable_id}][answer] #{response.error}")
-        render text: I18n.t("bank_link.wrong_request"), status: 400
+        if !bank_auto_response? && response.transaction_completed?
+          redirect_to response.return_path
+        else
+          LolitaBankLink.logger.error("[#{session_id}][#{response.paymentable_id}][answer] #{response.error}")
+          render text: I18n.t("bank_link.wrong_request"), status: 400
+        end
       end
     ensure
       if response

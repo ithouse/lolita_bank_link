@@ -43,6 +43,10 @@ module LolitaBankLink
       transaction && transaction.paymentable_id
     end
 
+    def transaction_completed?
+      transaction && transaction.completed?
+    end
+
     private
 
     def read_signature(params)
